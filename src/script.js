@@ -31,6 +31,19 @@ torusKnot.position.y = 4
 scene.add(torusKnot)
 
 /**
+ * Models
+ */
+gltfLoader.loader
+   { "/models/FlightHelmet/glTF/FlightHelmet.gltf",
+   (gltf)=>
+   {
+    scene.add(gltf.scene)
+   }
+}
+
+
+
+/**
  * Sizes
  */
 const sizes = {
