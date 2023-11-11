@@ -73,12 +73,12 @@ gui
 // scene.background=environmentMap;
 
 // HDR (RGBE) equirectagular
-rgbeLoader.load("/environmentMaps/0/2k.hdr", (environmentMap)=>
+rgbeLoader.load("/environmentMaps/blender-2k.hdr", (environmentMap)=>
 {
     environmentMap.mapping= THREE.EquirectangularReflectionMapping
 
     scene.environment=environmentMap;
- scene.background=environmentMap;
+//  scene.background=environmentMap;
 })
 
 /**
