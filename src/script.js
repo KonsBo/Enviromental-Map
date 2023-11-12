@@ -96,21 +96,53 @@ gui
 
 
 // Ground projected skybox
-rgbeLoader.load('/environmentMaps/2/2k.hdr', (environmentMap) =>
-{
-    environmentMap.mapping = THREE.EquirectangularReflectionMapping
-    scene.environment = environmentMap
+// rgbeLoader.load('/environmentMaps/2/2k.hdr', (environmentMap) =>
+// {
+//     environmentMap.mapping = THREE.EquirectangularReflectionMapping
+//     scene.environment = environmentMap
 
-    //Skybox
-    const skybox = new GroundProjectedSkybox(environmentMap)
-    skybox.radius=120
-    skybox.height=11
-    skybox.scale.setScalar(50)
-    scene.add(skybox)
+//     //Skybox
+//     const skybox = new GroundProjectedSkybox(environmentMap)
+//     skybox.radius=120
+//     skybox.height=11
+//     skybox.scale.setScalar(50)
+//     scene.add(skybox)
 
-    gui.add(skybox, 'radius', 1, 200, 0.1).name('skyboxRadius')
-    gui.add(skybox, 'height', 1, 100, 0.1).name('skyboxHeight')
-})
+//     gui.add(skybox, 'radius', 1, 200, 0.1).name('skyboxRadius')
+//     gui.add(skybox, 'height', 1, 100, 0.1).name('skyboxHeight')
+// })
+
+/**
+ * Real time enviroment map
+ */
+// Base environment map
+const environmentMap = textureLoader.load('/environmentMaps/blockadesLabsSkybox/interior_views_cozy_wood_cabin_with_cauldron_and_p.jpg')
+environmentMap.mapping = THREE.EquirectangularReflectionMapping
+environmentMap.colorSpace = THREE.SRGBColorSpace
+
+scene.background = environmentMap
+
+// Holy donut
+const holyDonut = new THREE.Mesh(
+    new THREE.TorusGeometry(8, 0.5),
+    new THREE.MeshBasicMaterial({ color: new THREE.Color(10,4,2) })
+)
+holyDonut.layers.enable(1)
+holyDonut.position.y = 3.5
+scene.add(holyDonut)
+
+
+    //Cube render target
+    const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(256,
+        {
+            type: THREE.HalfFloatType
+        }
+    )
+    scene.environment= cubeRenderTarget.texture
+
+    //cube camera
+    const cubeCamera=new THREE.CubeCamera(0.1,100,cubeRenderTarget)
+    cubeCamera.layers.set(1)
 
 
 /**
@@ -118,7 +150,7 @@ rgbeLoader.load('/environmentMaps/2/2k.hdr', (environmentMap) =>
  */
 const torusKnot = new THREE.Mesh(
     new THREE.TorusKnotGeometry(1, 0.4, 100, 16),
-    new THREE.MeshStandardMaterial({roughness:0.3, metalness:1, color:0xaaaaaa})
+    new THREE.MeshStandardMaterial({roughness:0, metalness:1, color:0xaaaaaa})
 )
 
 torusKnot.position.x = -4
@@ -193,6 +225,14 @@ const tick = () =>
 {
     // Time
     const elapsedTime = clock.getElapsedTime()
+
+    //Real time enviroment map
+    if(holyDonut)
+    {
+        holyDonut.rotation.x=Math.sin(elapsedTime)*2
+
+        cubeCamera.update(renderer,scene)
+    }
 
     // Update controls
     controls.update()
