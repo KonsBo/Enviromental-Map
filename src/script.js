@@ -10,6 +10,7 @@ import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader.js"
 const gltfLoader=new GLTFLoader()
 const cubeTextureLoader= new THREE.CubeTextureLoader()
 const rgbeLoader= new RGBELoader()
+const textureLoader = new THREE.TextureLoader()
 
 /**
  * Base
@@ -72,15 +73,25 @@ gui
 // scene.environment=environmentMap;
 // scene.background=environmentMap;
 
+
 // HDR (RGBE) equirectagular
-rgbeLoader.load("/environmentMaps/blender-2k.hdr", (environmentMap)=>
-{
-    environmentMap.mapping= THREE.EquirectangularReflectionMapping
+// rgbeLoader.load("/environmentMaps/blender-2k.hdr", (environmentMap)=>
+// {
+//     environmentMap.mapping= THREE.EquirectangularReflectionMapping
 
-    scene.environment=environmentMap;
+//     scene.environment=environmentMap;
 //  scene.background=environmentMap;
-})
+// })
 
+
+// LDR equirectangular
+const environmentMap = textureLoader.load('/environmentMaps/blockadesLabsSkybox/Realism_equirectangular-jpg_amazon_forest_little_japanese_112976399_9368053.jpg'
+)
+environmentMap.mapping= THREE.EquirectangularReflectionMapping
+environmentMap.colorSpace = THREE.SRGBColorSpace
+
+scene.background = environmentMap
+scene.environment = environmentMap
 /**
  * Torus Knot
  */
